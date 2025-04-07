@@ -41,5 +41,14 @@ export const userController = {
             res.status(error.statusCode).json({ error: error.message });
         }
     },
+    async deleteUser(req, res) {
+        try {
+            const userId = req.params.id;
+            const deletedUser = await userModel.delete(userId);
+            res.status(200).json(deletedUser);
+        } catch (error) {
+            res.status(error.statusCode).json({ error: error.message });
+        }
+    }
 
 }
