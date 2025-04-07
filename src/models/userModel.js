@@ -54,88 +54,51 @@ export const userModel = {
     },
 
     async update(user) {   // User -> { email, username, password, role}
-        console.log("user -> ", user)
+        // console.log("user -> ", user)
 
         try {
-
-            // if (user.email && user.password) {
-
-            //     let val = []
-            //     // const keysOfData = Object.keys(user).reduce((acc, key, index, arr) => {
-
-            //     //     if (key === "email" || key === "password") {
-            //     //         values.push(user[key]);
-            //     //     }
-
-            //     //     return acc + key + (index < arr.length - 1 ? ',' : '');
-
-            //     // }, '');
-            //     // const keysOfData = Object.keys(user).reduce((acc, key, index, arr) => {
-            //     //     if (key !== "email" || key !== "password") {
-            //     //         console.log("key -> ", key)
-            //     //         val.push(user[key]);
-            //     //         return acc + key + (index < arr.length - 1 ? ',' : '');
-            //     //     }
-            //     //     return acc;
-            //     // }, '');
-            //     const keysOfData = Object.keys(user).reduce((acc, key, index, arr) => {
-            //         if (key !== "email" && key !== "password") {
-            //             val.push(user[key]);
-            //             return acc + (acc ? ',' : '') + key;
-            //         }
-            //         return acc;
-            //     }, '');
-
-            //     console.log("Vals -> ", val);
-            //     console.log("Keys ->", keysOfData);
-            //     keysOfData.unshift(val)
-
-            //     const query = "INSERT INTO users ($1) VALUES ( $2, $3) RETURNING *"
-            //     // const values = [keysOfData, user.email, user.username, user.password, user.role, "inactive"];
-
-            //     const result = await client.query(query, keysOfData);
-            //     // console.log("result", result);
-            //     return result.rows;
-            //     return { vals: val, keys: keysOfData };
-            // } 
-            // 
             if (user.email && user.password) {
-                let val = [];
 
-                const keysOfData = Object.keys(user).reduce((acc, key) => {
-                    if (key !== "email" && key !== "password") {
-                        val.push(user[key]);
-                        acc.push(key);
-                    }
-                    return acc;
-                }, []);
+                const query = "SELECT * FROM users WHERE email = $1 AND password = $2";
+                const values = [user.email, user.password];
+                const result = await client.query(query, values);
+                // console.log("result -> ", result)
+                if (result.rowCount == 0) {
+                    throw new apiError(404, 'User not found');
+                }
 
-                console.log("Vals -> ", val);
-                console.log("Keys ->", keysOfData);
 
-                const query = `INSERT INTO users (${keysOfData.join(', ')}) VALUES (${keysOfData.map((_, index) => `$${index + 1}`).join(', ')}) RETURNING *`;
+                const currentUserData = result.rows[0];
+                const newUserData = {
+                    username: user.username || currentUserData.username,
+                    password: user.password == currentUserData.password ? (user.newPassword || currentUserData.password) : currentUserData.password,
+                    role: user.role || currentUserData.role,
+                    status: user.status || currentUserData.status,
+                }
 
-                const result = await client.query(query, [...val, user.email, user.username, user.password, user.role, "inactive"]);
+                const updateQuery = "UPDATE users SET username = $1, password = $2, role = $3, status = $4  WHERE email = $5 AND password = $6 RETURNING *";
 
-                console.log("Inserted row ->", result.rows);
+                const updateValues = [newUserData.username, newUserData.password, newUserData.role, newUserData.status, user.email, user.password];
+                const updateResult = await client.query(updateQuery, updateValues);
+                return updateResult.rows[0];
 
-                return result.rows;
+
+            } else if (user.username && user.password) {
+
             }
-            else if (user.username && user.password) {
 
-            }
-
-            // const query = "INSERT INTO users (email, username, password, role, status) VALUES ($1, $2, $3, $4, $5) RETURNING *"
-            // const values = [user.email, user.username, user.password, user.role, "inactive"];
-            // const result = await client.query(query, values);
-            // // console.log("result", result);
-            // return result.rows;
         } catch (error) {
-
+            // console.log(error)
+            if (error.code == "22P02") {
+                throw new apiError(500, "Enum uchun Noto'g'ri malumot kiritildi!!!");
+            }
+            throw new apiError(500, error.message);
         }
 
-
-
     },
+
+    async delete(user) {
+
+    }
 
 }
