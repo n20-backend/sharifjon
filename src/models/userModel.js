@@ -3,9 +3,9 @@ import client from "../pg/pg.js";
 
 class apiError extends Error {
     constructor(status, message) {
-        super(message);  // Call the parent class (Error) constructor with the message
-        this.statusCode = status;  // Add a custom status property
-        this.name = this.constructor.name;  // Set the name of the error
+        super(message);
+        this.statusCode = status;
+        this.name = this.constructor.name;
     }
 }
 
