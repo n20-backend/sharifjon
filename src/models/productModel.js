@@ -1,4 +1,5 @@
 import client from "../pg/pg.js";
+// tayyor emas
 
 
 class apiError extends Error {
@@ -34,10 +35,14 @@ export const userModel = {
 
     },
 
-    async getAllUsers() {
-        const query = "SELECT * FROM users";
-        const result = await client.query(query);
-        return result.rows;
+    async getAllProducts() {
+        try {
+            const query = "SELECT * FROM products";
+            const result = await client.query(query);
+            return result.rows;
+        } catch (error) {
+            throw new apiError(500, error.message);
+        }
     },
     async getOne(id) {
         const query = "SELECT * FROM users WHERE id = $1";

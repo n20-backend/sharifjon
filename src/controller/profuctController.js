@@ -1,10 +1,10 @@
-import { userModel } from "../models/productModel.js";
+// import { userModel } from "../models/productModel.js";
 
 
 export const userController = {
-    async getAllUsers(req, res) {
+    async getAllProducts(req, res) {
         try {
-            const users = await userModel.getAllUsers();
+            const users = await userModel.getAllProducts();
             res.status(200).json(users);
         } catch (error) {
             res.status(500).json({ error: error.message });

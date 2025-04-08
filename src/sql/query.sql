@@ -27,8 +27,7 @@ CREATE TABLE users (
 -- Categories 
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL,
-    parent_id INTEGER REFERENCES categories(id) ON DELETE SET NULL
+    name VARCHAR(255) UNIQUE NOT NULL
 );
 
 -- Products 
@@ -72,3 +71,18 @@ CREATE TABLE product_discounts (
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL
 );
+
+
+
+
+-- Product Categoriyalar qo'shish
+
+INSERT INTO categories(name) 
+VALUES
+('Electronics'),
+('Clothing'),
+('Books'),
+('Furniture'),
+('Sports'),
+('Beauty');
+

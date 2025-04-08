@@ -1,11 +1,11 @@
 import express from 'express';
-import { userController } from '../controller/userController.js';
+import { userController } from '../controller/profuctController.js';
 
 const userRouter = express.Router();
 
 
 // CRUD
-userRouter.get('/', userController.getAllUsers);
+userRouter.get('/', userController.getAllProducts);
 
 // userRouter.get('/:id', userController.getOne);
 
